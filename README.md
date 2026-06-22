@@ -41,6 +41,21 @@ Pour le moment, l’application se lance depuis Visual Studio Code via la comman
 python main.py
 ```
 
+## 🤝 Contribution & esprit du projet
+Ce projet a été réalisé dans le cadre d’un TFE et je suis encore débutant en développement.  
+Le code n’est donc pas parfait : j’apprends, j’expérimente et je fais des erreurs, ce qui fait partie du processus.
+
+Si vous remarquez un bug, une amélioration possible ou si vous souhaitez proposer une nouvelle fonctionnalité, toutes les contributions sont les bienvenues :
+
+- Suggestions d’idées  
+- Optimisations de code  
+- Corrections de bugs  
+- Améliorations de l’interface  
+- Documentation  
+
+N’hésitez pas à ouvrir une issue ou à proposer une pull request.  
+L’objectif est d’apprendre, de progresser et de faire évoluer l’outil ensemble.
+
 ## 📄 Licence — CC BY‑NC 4.0
 Ce projet est distribué sous licence Creative Commons Attribution – Non Commercial 4.0.
 
