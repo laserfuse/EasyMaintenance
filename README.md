@@ -7,6 +7,9 @@ L’application utilise CustomTkinter pour proposer une interface moderne et sim
 
 L’objectif est de regrouper plusieurs outils de maintenance Windows dans une interface centralisée et accessible.
 
+## 🎓 Contexte TFE
+Ce logiciel a été réalisé dans le cadre d’un Travail de Fin d’Études, avec pour objectif de proposer un outil simple permettant d’effectuer des opérations de maintenance Windows sans devoir utiliser manuellement les commandes système.
+
 ## ✨ Fonctionnalités actuelles
 
 ### 1. Informations système
@@ -37,9 +40,6 @@ Pour le moment, l’application se lance depuis Visual Studio Code via la comman
 ```bash
 python main.py
 ```
-
-## 🎓 Contexte TFE
-Ce logiciel a été réalisé dans le cadre d’un Travail de Fin d’Études, avec pour objectif de proposer un outil simple permettant d’effectuer des opérations de maintenance Windows sans devoir utiliser manuellement les commandes système.
 
 ## 📄 Licence — CC BY‑NC 4.0
 Ce projet est distribué sous licence Creative Commons Attribution – Non Commercial 4.0.
