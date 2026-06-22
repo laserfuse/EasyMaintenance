@@ -1,4 +1,5 @@
 # EasyMaintenance
+![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-blue.svg)
 
 ## 🖥️ Présentation
 Ce projet est un logiciel d’aide à la maintenance PC, développé en Python dans le cadre d’un Travail de Fin d’Études (TFE).  
