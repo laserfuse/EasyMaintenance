@@ -1,0 +1,5 @@
+requests
+customtkinter
+wmi
+psutil
+packaging
