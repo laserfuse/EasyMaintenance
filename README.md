@@ -174,4 +174,5 @@ Le projet doit rester entièrement gratuit.
 ## 🎉 Remerciements
 
 Merci d’utiliser EasyMaintenance.  
-Le projet est encore jeune et amené à évoluer — vos retours et idées sont les bienvenus.
+Le projet est encore jeune et amené à évoluer 
+— vos retours et idées sont les bienvenus.
