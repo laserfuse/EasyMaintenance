@@ -20,9 +20,7 @@ L’application utilise **CustomTkinter** pour offrir une interface moderne et i
 
 Rendez-vous sur la page des Releases du projet :
 
-👉 **https://github.com/TON_COMPTE/TON_REPO/releases/latest**
-
-> Remplace `TON_COMPTE` et `TON_REPO` par ton pseudo GitHub et le nom de ton dépôt.
+👉 **https://github.com/laserfuse/EasyMaintenance/releases/tag/v0.1.0**
 
 Téléchargez le fichier ZIP correspondant à la version la plus récente.
 
@@ -67,8 +65,8 @@ Si vous souhaitez exécuter le projet depuis le code source :
 Via Git :
 
 ```bash
-git clone https://github.com/TON_COMPTE/TON_REPO.git
-cd TON_REPO
+git clone https://github.com/laserfuse/EasyMaintenance.git
+cd EasyMaintenance
 ```
 
 Ou en téléchargeant le ZIP du code source depuis GitHub, puis en l’extrayant.
