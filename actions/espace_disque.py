@@ -17,7 +17,9 @@ def espace_disque():
                     "Utilisé (Go)": used // (1024**3),
                     "Libre (Go)": free // (1024**3)
                 }
-            except:
-                pass
+            except OSError as error:
+                disques[f"Disque {lettre}:"] = {
+                    "Erreur": str(error)
+                }
 
     return disques

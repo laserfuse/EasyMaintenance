@@ -1,16 +1,25 @@
 import customtkinter as ctk
+from tkinter import TclError, messagebox
+import threading
 from actions.infos_systeme import infos_systeme
 from actions.espace_disque import espace_disque
-from actions.maintenance import run_cmd, run_cmd_in_cmd
-from actions.maintenance import run_ps_admin
+from actions.maintenance import run_cmd
+
+_root = None
+_console_output = None
+_active_process = None
 
 def start_ui():
+    global _root
+
     ctk.set_appearance_mode("light")
     ctk.set_default_color_theme("blue")
 
     root = ctk.CTk()
+    _root = root
     root.title("Easy Maintenance")
     root.geometry("700x500")
+    root.protocol("WM_DELETE_WINDOW", fermer_application)
 
     # Titre
     title = ctk.CTkLabel(root, text="Easy Maintenance", font=("Arial", 24, "bold"))
@@ -109,8 +118,11 @@ def afficher_espace_disque():
 ##  Dashboard maintenance
 
 def afficher_dashboard_maintenance():
+    global _console_output
+
     for widget in output_frame.winfo_children():
         widget.destroy()
+    _console_output = None
 
     # Nettoyage
     section = ctk.CTkLabel(output_frame, text="Nettoyage", font=("Arial", 18, "bold"))
@@ -119,7 +131,7 @@ def afficher_dashboard_maintenance():
     ctk.CTkButton(
         output_frame,
         text="Nettoyer fichiers temporaires",
-        command=lambda: run_cmd("del /q/f/s %TEMP%\\*")
+        command=lambda: lancer_commande("del /q/f/s %TEMP%\\*")
     ).pack(fill="x", pady=5)
 
     # Verification
@@ -129,19 +141,19 @@ def afficher_dashboard_maintenance():
     ctk.CTkButton(
         output_frame,
         text="SFC /scannow",
-        command=lambda: run_cmd_in_cmd("sfc /scannow")
+        command=lambda: lancer_commande("sfc /scannow")
     ).pack(fill="x", pady=5)
 
     ctk.CTkButton(
         output_frame,
         text="DISM /RestoreHealth",
-        command=lambda: run_cmd_in_cmd("DISM /Online /Cleanup-Image /RestoreHealth")
+        command=lambda: lancer_commande("DISM /Online /Cleanup-Image /RestoreHealth")
     ).pack(fill="x", pady=5)
 
     ctk.CTkButton(
         output_frame,
         text="CHKDSK /scan",
-        command=lambda: run_cmd_in_cmd("chkdsk /scan")
+        command=lambda: lancer_commande("chkdsk /scan")
     ).pack(fill="x", pady=5)
 
     # Reseau
@@ -151,13 +163,13 @@ def afficher_dashboard_maintenance():
     ctk.CTkButton(
         output_frame,
         text="Reset DNS",
-        command=lambda: run_cmd_in_cmd("ipconfig /flushdns")
+        command=lambda: lancer_commande("ipconfig /flushdns")
     ).pack(fill="x", pady=5)
 
     ctk.CTkButton(
         output_frame,
         text="Reset réseau",
-        command=lambda: run_cmd_in_cmd("netsh winsock reset")
+        command=lambda: lancer_commande("netsh winsock reset")
     ).pack(fill="x", pady=5)
 
     # Services
@@ -167,5 +179,87 @@ def afficher_dashboard_maintenance():
     ctk.CTkButton(
         output_frame,
         text="Redémarrer Windows Update",
-        command=lambda: run_cmd_in_cmd("net stop wuauserv && net start wuauserv")
+        command=lambda: lancer_commande("net stop wuauserv && net start wuauserv")
     ).pack(fill="x", pady=5)
+
+    _console_output = ctk.CTkTextbox(
+        output_frame,
+        height=180,
+        wrap="word",
+        font=("Consolas", 11),
+        activate_scrollbars=True,
+    )
+    _console_output.pack(fill="both", expand=True, pady=(10, 5))
+    _console_output.insert("end", "La sortie des commandes apparaîtra ici.\n")
+    _console_output.configure(state="disabled")
+
+def lancer_commande(commande):
+    global _active_process
+
+    if _active_process is not None:
+        if _active_process.poll() is None:
+            messagebox.showinfo("Commande en cours", "Une commande de maintenance est déjà en cours.")
+            return
+        _active_process = None
+
+    try:
+        process = run_cmd(commande)
+    except OSError as error:
+        messagebox.showerror("Erreur de commande", str(error))
+        return
+
+    _active_process = process
+    _ajouter_sortie(f"> {commande}\n\n")
+    threading.Thread(target=_lire_sortie_commande, args=(process,), daemon=True).start()
+
+def _lire_sortie_commande(process):
+    try:
+        if process.stdout is not None:
+            for ligne in process.stdout:
+                _planifier_ajout_sortie(ligne)
+        code = process.wait()
+        _planifier_ajout_sortie(f"\nCommande terminée (code de sortie : {code}).\n\n")
+        _planifier_terminaison(process)
+    except OSError as error:
+        _planifier_ajout_sortie(f"\nErreur de lecture de la commande : {error}\n")
+        _planifier_terminaison(process)
+
+def _planifier_ajout_sortie(texte):
+    if _root is None:
+        return
+    try:
+        _root.after(0, _ajouter_sortie, texte)
+    except TclError:
+        return
+
+def _planifier_terminaison(process):
+    if _root is None:
+        return
+    try:
+        _root.after(0, _commande_terminee, process)
+    except TclError:
+        return
+
+def _ajouter_sortie(texte):
+    if _console_output is None:
+        return
+    try:
+        if not _console_output.winfo_exists():
+            return
+        _console_output.configure(state="normal")
+        _console_output.insert("end", texte)
+        _console_output.see("end")
+        _console_output.configure(state="disabled")
+    except TclError:
+        return
+
+def _commande_terminee(process):
+    global _active_process
+    if _active_process is process:
+        _active_process = None
+
+def fermer_application():
+    if _active_process is not None and _active_process.poll() is None:
+        _active_process.terminate()
+    if _root is not None:
+        _root.destroy()

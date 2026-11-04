@@ -1,31 +1,41 @@
 import platform
 import os
-import shutil
 import socket
 import time
-import subprocess
+import ctypes
+
+
+class _MemoryStatusEx(ctypes.Structure):
+    _fields_ = [
+        ("dwLength", ctypes.c_ulong),
+        ("dwMemoryLoad", ctypes.c_ulong),
+        ("ullTotalPhys", ctypes.c_ulonglong),
+        ("ullAvailPhys", ctypes.c_ulonglong),
+        ("ullTotalPageFile", ctypes.c_ulonglong),
+        ("ullAvailPageFile", ctypes.c_ulonglong),
+        ("ullTotalVirtual", ctypes.c_ulonglong),
+        ("ullAvailVirtual", ctypes.c_ulonglong),
+        ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+    ]
+
 
 def get_ram_windows():
-    try:
-        output = subprocess.check_output("wmic computersystem get TotalPhysicalMemory", shell=True)
-        lines = output.decode().splitlines()
-        for line in lines:
-            if line.strip().isdigit():
-                total_bytes = int(line.strip())
-                return total_bytes // (1024**3)
-    except:
+    status = _MemoryStatusEx()
+    status.dwLength = ctypes.sizeof(status)
+    if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
         return "Non disponible"
+    return status.ullTotalPhys // (1024**3)
 
 def get_windows_edition():
     try:
-        output = subprocess.check_output(
-            'wmic os get Caption', shell=True
-        ).decode(errors="ignore").splitlines()
+        import winreg
 
-        for line in output:
-            if "Windows" in line:
-                return line.strip()
-    except:
+        with winreg.OpenKey(
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\Microsoft\Windows NT\CurrentVersion",
+        ) as key:
+            return winreg.QueryValueEx(key, "ProductName")[0]
+    except (OSError, ImportError):
         return "Non disponible"
 
 
@@ -63,7 +73,7 @@ def infos_systeme():
     # Reseau
     try:
         ip = socket.gethostbyname(socket.gethostname())
-    except:
+    except (OSError, socket.gaierror):
         ip = "Non disponible"
 
     data["Réseau"] = {
