@@ -4,6 +4,8 @@
 EasyMaintenance est un outil simple et moderne destiné à faciliter la maintenance de Windows.  
 Développé en Python dans le cadre d’un Travail de Fin d’Études (TFE), il regroupe plusieurs actions de diagnostic et de nettoyage dans une interface unique et accessible.
 
+**Version actuelle : 0.1.1**
+
 ---
 
 ## 🖥️ Présentation du projet
@@ -18,34 +20,17 @@ L’application utilise **CustomTkinter** pour offrir une interface moderne et i
 
 ### 🔹 1. Télécharger la dernière version
 
-Rendez-vous sur la page des Releases du projet :
+Rendez-vous sur la page des Releases du projet et téléchargez `EasyMaintenance.exe` :
 
-👉 **https://github.com/laserfuse/EasyMaintenance/releases/tag/v0.1.0**
+👉 **https://github.com/laserfuse/EasyMaintenance/releases/latest**
 
-Téléchargez le fichier ZIP correspondant à la version la plus récente.
-
----
-
-### 🔹 2. Extraire le dossier
-
-Une fois le ZIP téléchargé :
-
-1. Faites un clic droit sur le fichier ZIP  
-2. Sélectionnez **« Extraire tout… »**  
-3. Choisissez un dossier de destination  
-4. Ouvrez le dossier extrait
-
----
-
-### 🔹 3. Lancer le logiciel
-
-Dans le dossier extrait, ouvrez :
+### 🔹 2. Lancer le logiciel
 
 ```text
-main.exe
+EasyMaintenance.exe
 ```
 
-Le logiciel peut demander les droits administrateur (UAC), car certaines actions nécessitent un accès système.
+Le logiciel peut demander les droits administrateur (UAC), car certaines actions de maintenance nécessitent ces autorisations.
 
 ---
 
@@ -93,11 +78,14 @@ Les principales dépendances sont :
 
 ### 4. Lancer l’application
 
-Toujours dans le dossier du projet :
+Depuis le dossier du projet, lancez :
 
 ```bash
 python main.py
 ```
+
+L’application peut demander les droits administrateur au démarrage.
+
 ## ✨ Fonctionnalités principales
 
 ### 🧩 Informations système
@@ -123,12 +111,14 @@ Affichage des disques avec :
 Exécution automatisée de plusieurs commandes système :
 
 - Nettoyage des fichiers temporaires  
-- sfc /scannow  
-- DISM /RestoreHealth  
-- chkdsk /scan  
+- Vérification système avec `sfc /scannow`  
+- Réparation de l’image Windows avec `DISM /Online /Cleanup-Image /RestoreHealth`  
+- Vérification du disque avec `chkdsk /scan`  
 - Réinitialisation du cache DNS  
 - Réinitialisation réseau  
 - Redémarrage du service Windows Update  
+- Affichage de la sortie des commandes dans l’application, sans fenêtre CMD séparée  
+- Exécution des commandes en arrière-plan pour garder l’interface réactive  
 
 ---
 
